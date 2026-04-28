@@ -54,7 +54,7 @@ app.post('/api/generate', async (req, res) => {
 
         console.log("Calling SDXL for stable transformation...");
         const output = await replicate.run(
-            "stability-ai/sdxl:39ed52f2a78e934b3ba6e24ee314407850199355df247138f65839b251a6a5f0",
+            "stability-ai/sdxl:7762fd07cf82c948538e41f63f77d685e02b063e37e496e96eefd46c929f9bdc",
             {
                 input: {
                     prompt: promptText,
