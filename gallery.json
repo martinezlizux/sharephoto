@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "url": "/gallery1.png",
+    "timestamp": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "url": "/gallery2.png",
+    "timestamp": "2024-01-01T00:00:01.000Z"
+  }
+]
