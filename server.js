@@ -55,25 +55,29 @@ app.post('/api/generate', async (req, res) => {
 
         console.log("Calling SDXL for stable transformation...");
         const output = await replicate.run(
-            "fofr/face-to-many:a07f252abbbd832009640b27f063ea52d87d7a23a185ca165bec23b5adc8deaf",
+            "xai/grok-imagine-image",
             {
                 input: {
                     image: image,
-                    style: "3D",
                     prompt: promptText,
-                    instant_id_strength: 1,
-                    denoising_strength: 0.65,
-                    prompt_strength: 4.5
+                    aspect_ratio: "1:1"
                 }
             }
-        ).catch(err => {
-            console.error("Replicate API specific error:", err.message);
-            throw err;
-        });
+        );
 
-        let generatedUrl = Array.isArray(output) ? output[0] : output;
-        if (!generatedUrl) {
+        if (!output) {
             throw new Error("No output from Replicate");
+        }
+
+        let generatedUrl;
+        if (Array.isArray(output)) {
+            generatedUrl = output[0];
+        } else if (typeof output === 'string') {
+            generatedUrl = output;
+        } else if (output.url) {
+            generatedUrl = output.url;
+        } else {
+            generatedUrl = output; // For stream or other types
         }
 
         console.log("Replicate output URL:", generatedUrl);
