@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let previewImage = null;
 
   // INITIAL LOAD
+  const urlParams = new URLSearchParams(window.location.search);
+  const isAdmin = urlParams.get('admin') === 'spruce';
+  
   loadGallery();
 
   // UPLOAD HANDLER
@@ -208,6 +211,12 @@ document.addEventListener('DOMContentLoaded', () => {
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
                 </svg>
               </button>
+              ${isAdmin ? `
+              <button class="gallery-icon-btn delete-btn" title="Borrar (Admin)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                </svg>
+              </button>` : ''}
             </div>
           </div>
         `;
@@ -246,6 +255,26 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Download error:", err);
           }
         });
+
+        // Delete logic
+        const deleteBtn = div.querySelector('.delete-btn');
+        if (deleteBtn) {
+          deleteBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            if (!confirm("¿Estás seguro de que quieres borrar esta foto para siempre?")) return;
+            
+            try {
+              const res = await fetch(`/api/gallery/${item.id}`, { method: 'DELETE' });
+              if (res.ok) {
+                div.style.transform = 'scale(0.8)';
+                div.style.opacity = '0';
+                setTimeout(() => div.remove(), 300);
+              }
+            } catch (err) {
+              console.error("Delete error:", err);
+            }
+          });
+        }
 
         galleryGrid.appendChild(div);
       });

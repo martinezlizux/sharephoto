@@ -267,6 +267,24 @@ app.get('/api/gallery', async (req, res) => {
     }
 });
 
+app.delete('/api/gallery/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (supabase) {
+            const { error } = await supabase
+                .from('gallery')
+                .delete()
+                .eq('id', id);
+            
+            if (error) throw error;
+            return res.json({ success: true });
+        }
+        res.status(501).json({ error: "Local delete not implemented" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.use((req, res) => {
     console.warn(`404 Not Found: ${req.method} ${req.url}`);
     res.status(404).send('Not Found');

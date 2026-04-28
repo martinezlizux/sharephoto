@@ -727,8 +727,9 @@ body {
   transform: translateY(-2px);
 }
 
-.gallery-icon-btn:active {
-  transform: scale(0.9);
+.gallery-icon-btn.delete-btn:hover {
+  background: #ef4444;
+  border-color: #ef4444;
 }
 
 /* Mobile: always visible icons */
