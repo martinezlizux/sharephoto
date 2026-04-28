@@ -700,3 +700,65 @@ body {
   font-size: 16px;
   font-weight: 400;
 }
+
+/* Mobile Improvements for Hero */
+@media (max-width: 768px) {
+  .hero {
+    max-height: none;
+    padding: 60px 20px 100px 20px;
+    text-align: center;
+  }
+
+  .hero-container {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .dragon-mascot-container {
+    justify-content: center;
+    order: 2; /* Mascot at bottom for overlap effect */
+  }
+
+  .dragon-mascot {
+    width: 280px;
+    margin-bottom: -140px;
+  }
+
+  .hero-text-content {
+    order: 1;
+    align-items: center;
+  }
+
+  .headline {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+    margin-bottom: 24px;
+  }
+
+  .school-shield {
+    height: 70px;
+  }
+
+  .btn-upload {
+    width: 100%;
+    max-width: 320px;
+    font-size: 18px;
+    padding: 20px;
+    height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .headline {
+    font-size: 28px;
+  }
+  
+  .dragon-mascot {
+    width: 220px;
+    margin-bottom: -120px;
+  }
+}
