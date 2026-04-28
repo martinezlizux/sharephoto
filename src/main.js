@@ -26,28 +26,28 @@ document.addEventListener('DOMContentLoaded', () => {
     reader.onload = (event) => {
       const img = new Image();
       img.onload = () => {
-        // RESIZE TO MAX 800px TO PREVENT API OVERLOAD
+        // RESIZE AND CROP TO SQUARE (1:1)
         const canvas = document.createElement('canvas');
-        let width = img.width;
-        let height = img.height;
-        const maxDim = 800;
+        const targetSize = 1024; 
+        canvas.width = targetSize;
+        canvas.height = targetSize;
+        const ctx = canvas.getContext('2d');
 
-        if (width > height) {
-          if (width > maxDim) {
-            height *= maxDim / width;
-            width = maxDim;
-          }
+        // Center crop logic
+        let sx, sy, sWidth, sHeight;
+        if (img.width > img.height) {
+          sWidth = img.height;
+          sHeight = img.height;
+          sx = (img.width - img.height) / 2;
+          sy = 0;
         } else {
-          if (height > maxDim) {
-            width *= maxDim / height;
-            height = maxDim;
-          }
+          sWidth = img.width;
+          sHeight = img.width;
+          sx = 0;
+          sy = (img.height - img.width) / 2;
         }
 
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
+        ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, targetSize, targetSize);
 
         currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.85); // JPEG slightly smaller
         showModal(currentPhotoBase64);
@@ -167,7 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
       data.forEach(item => {
         const div = document.createElement('div');
         div.className = 'gallery-item';
-        div.innerHTML = `<img src="${item.url}" alt="Dragon transformation" loading="lazy" onerror="this.parentElement.style.display='none'">`;
+        div.innerHTML = `
+          <div class="gallery-image-container">
+            <img src="${item.url}" alt="Dragon transformation" loading="lazy" onerror="this.parentElement.parentElement.style.display='none'">
+          </div>
+        `;
         galleryGrid.appendChild(div);
       });
     } catch (error) {
