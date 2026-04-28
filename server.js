@@ -78,9 +78,26 @@ app.post('/api/generate', async (req, res) => {
         try {
             const tempFileName = `preview_${Date.now()}.png`;
             const tempFilePath = path.join(publicPath, tempFileName);
-            const imgResponse = await fetch(generatedUrl);
-            if (!imgResponse.ok) throw new Error(`Fetch failed with status ${imgResponse.status}`);
-            const buffer = Buffer.from(await imgResponse.arrayBuffer());
+            
+            let buffer;
+            if (typeof generatedUrl === 'string' && generatedUrl.startsWith('http')) {
+                const imgResponse = await fetch(generatedUrl);
+                if (!imgResponse.ok) throw new Error(`Fetch failed with status ${imgResponse.status}`);
+                buffer = Buffer.from(await imgResponse.arrayBuffer());
+            } else if (generatedUrl instanceof ReadableStream || (generatedUrl && typeof generatedUrl.getReader === 'function')) {
+                // Handle stream
+                const reader = generatedUrl.getReader();
+                const chunks = [];
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    chunks.push(value);
+                }
+                buffer = Buffer.concat(chunks.map(c => Buffer.from(c)));
+            } else {
+                throw new Error("Unknown output format from Replicate");
+            }
+
             await fs.writeFile(tempFilePath, buffer);
             generatedUrl = `/${tempFileName}`;
             console.log("Successfully cached locally:", generatedUrl);

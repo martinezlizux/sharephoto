@@ -10,6 +10,10 @@ export default defineConfig({
             '/gallery': {
                 target: 'http://localhost:3000',
                 changeOrigin: true,
+            },
+            '/preview_': {
+                target: 'http://localhost:3000',
+                changeOrigin: true,
             }
         }
     }
