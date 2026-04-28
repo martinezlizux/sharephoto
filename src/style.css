@@ -701,54 +701,95 @@ body {
   font-weight: 400;
 }
 
-/* Mobile Improvements for Hero */
+/* Mobile Improvements for Hero (Figma Match) */
 @media (max-width: 768px) {
   .hero {
     max-height: none;
-    padding: 60px 20px 100px 20px;
-    text-align: center;
+    padding: 40px 20px 60px 20px;
+    background: #1835AB; /* Solid blue from Figma */
   }
 
   .hero-container {
+    display: flex;
     flex-direction: column;
-    gap: 30px;
-  }
-
-  .dragon-mascot-container {
-    justify-content: center;
-    order: 2; /* Mascot at bottom for overlap effect */
-  }
-
-  .dragon-mascot {
-    width: 280px;
-    margin-bottom: -140px;
-  }
-
-  .hero-text-content {
-    order: 1;
     align-items: center;
+    gap: 0;
   }
 
-  .headline {
-    font-size: 32px;
-    margin-bottom: 16px;
+  /* Flatten structure for easy ordering */
+  .hero-text-content, 
+  .dragon-mascot-container {
+    display: contents;
   }
 
-  .subtitle {
-    font-size: 18px;
+  .school-shield-container {
+    order: 1;
     margin-bottom: 24px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
   }
 
   .school-shield {
-    height: 70px;
+    height: 80px;
+  }
+
+  .headline {
+    order: 2;
+    font-size: 32px;
+    color: white;
+    text-align: center;
+    margin-bottom: 12px;
+    max-width: 300px;
+  }
+
+  .subtitle {
+    order: 3;
+    font-size: 18px;
+    color: #CBCCFA;
+    text-align: center;
+    margin-bottom: 20px;
+    max-width: 320px;
+    line-height: 1.4;
+  }
+
+  .dragon-mascot {
+    order: 4;
+    width: 280px;
+    height: auto;
+    margin-bottom: 20px;
+    filter: none; /* Clean look from Figma */
+  }
+
+  .upload-container {
+    order: 5;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
   }
 
   .btn-upload {
-    width: 100%;
-    max-width: 320px;
+    width: 280px;
+    height: 64px;
     font-size: 18px;
-    padding: 20px;
-    height: auto;
+    background: #FFB800;
+    border: none;
+    box-shadow: 0 4px 0 #121A3D; /* Dark shadow from Figma */
+    border-radius: 32px;
+    padding: 0;
+  }
+
+  .tagline {
+    order: 6;
+    color: white;
+    font-weight: 700;
+    font-size: 22px;
+    text-align: center;
+  }
+
+  .hero-bg-elements {
+    display: none; /* Clean look from Figma */
   }
 }
 
