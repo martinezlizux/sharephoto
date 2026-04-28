@@ -168,10 +168,13 @@ document.addEventListener('DOMContentLoaded', () => {
           photoModal.classList.add('hidden');
           loadGallery();
         }, 1500);
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Server error");
       }
     } catch (error) {
       console.error("Share Error:", error);
-      modalStatus.textContent = "Could not share. Try again?";
+      modalStatus.innerHTML = `<span style="color: #ef4444">Error: ${error.message}</span>`;
       shareGalleryBtn.disabled = false;
     }
   });

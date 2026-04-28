@@ -141,41 +141,65 @@ app.post('/api/gallery', async (req, res) => {
         if (!imageUrl) return res.status(400).json({ error: 'No image URL' });
 
         if (supabase) {
-            console.log("Saving to Supabase...");
-            // 1. Upload to Supabase Storage if it's a local/data URL
+            console.log("--- Saving to Supabase ---");
             let publicUrl = imageUrl;
             
-            if (imageUrl.startsWith('/') || imageUrl.startsWith('data:image')) {
+            // ALWAYS upload to Supabase Storage to ensure persistence
+            try {
                 let buffer;
+                let contentType = 'image/png';
+
                 if (imageUrl.startsWith('data:image')) {
                     const base64Data = imageUrl.replace(/^data:image\/\w+;base64,/, "");
                     buffer = Buffer.from(base64Data, 'base64');
+                } else if (imageUrl.startsWith('http')) {
+                    console.log("Downloading external image for Supabase Storage...");
+                    const imgRes = await fetch(imageUrl);
+                    if (!imgRes.ok) throw new Error(`Failed to fetch image: ${imgRes.statusText}`);
+                    buffer = Buffer.from(await imgRes.arrayBuffer());
+                    contentType = imgRes.headers.get('content-type') || 'image/png';
                 } else {
                     const sourcePath = path.join(publicPath, imageUrl);
                     buffer = await fs.readFile(sourcePath);
                 }
 
-                const fileName = `shared_${Date.now()}.png`;
+                const fileName = `dragon_${Date.now()}.png`;
+                console.log(`Uploading ${fileName} to 'gallery' bucket...`);
+                
                 const { data: uploadData, error: uploadError } = await supabase.storage
                     .from('gallery')
-                    .upload(fileName, buffer, { contentType: 'image/png' });
+                    .upload(fileName, buffer, { contentType, upsert: true });
 
-                if (uploadError) throw uploadError;
+                if (uploadError) {
+                    console.error("Supabase Storage Error:", uploadError);
+                    throw new Error(`Storage Error: ${uploadError.message}`);
+                }
 
                 const { data: urlData } = supabase.storage
                     .from('gallery')
                     .getPublicUrl(fileName);
                 
                 publicUrl = urlData.publicUrl;
+                console.log("Supabase Public URL:", publicUrl);
+            } catch (storageErr) {
+                console.error("Storage Step Failed:", storageErr.message);
+                // Continue if it was already a public URL, otherwise fail
+                if (!imageUrl.startsWith('http')) throw storageErr;
             }
 
             // 2. Insert into DB
+            console.log("Inserting record into 'gallery' table...");
             const { data, error } = await supabase
                 .from('gallery')
                 .insert([{ url: publicUrl }])
                 .select();
 
-            if (error) throw error;
+            if (error) {
+                console.error("Supabase DB Error:", error);
+                throw new Error(`Database Error: ${error.message}`);
+            }
+            
+            console.log("Successfully saved to Supabase!");
             return res.json({ success: true, item: data[0] });
         }
 
