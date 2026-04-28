@@ -62,7 +62,14 @@ document.addEventListener('DOMContentLoaded', () => {
     transformedPhotoUrl = null;
     modalStatus.textContent = "Ready to add some magic?";
 
-    viewfinder.innerHTML = '<div class="processing-state hidden" id="processingState"><div class="spinner"></div><p>Transforming...</p></div>';
+    viewfinder.innerHTML = `
+      <div class="processing-state hidden" id="processingState">
+        <div class="countdown-container">
+          <span id="countdownTimer" class="countdown-number">8</span>
+        </div>
+        <p id="processingText">Summoning the magic...</p>
+      </div>
+    `;
     previewImage = document.createElement('img');
     previewImage.src = imgSrc;
     previewImage.style.width = '100%';
@@ -84,9 +91,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // APPLY FILTER
   applyFilterBtn.addEventListener('click', async () => {
     const proc = document.getElementById('processingState');
+    const countdownTimer = document.getElementById('countdownTimer');
+    const processingText = document.getElementById('processingText');
+    
     proc.classList.remove('hidden');
     applyFilterBtn.disabled = true;
     modalStatus.textContent = "Summoning the dragon...";
+    
+    let timeLeft = 8;
+    countdownTimer.textContent = timeLeft;
+    
+    const timerInterval = setInterval(() => {
+      timeLeft--;
+      if (timeLeft > 0) {
+        countdownTimer.textContent = timeLeft;
+      } else {
+        countdownTimer.textContent = "✨";
+        processingText.textContent = "Finalizing magic...";
+      }
+    }, 1000);
 
     try {
       const response = await fetch('/api/generate', {
@@ -115,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
       modalStatus.innerHTML = `<span style="color: #ef4444">Error: ${error.message}</span>`;
       shareGalleryBtn.disabled = true;
     } finally {
+      clearInterval(timerInterval);
       proc.classList.add('hidden');
     }
   });
