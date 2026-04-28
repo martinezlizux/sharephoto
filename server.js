@@ -3,6 +3,7 @@ import multer from 'multer';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import Replicate from 'replicate';
+import { createClient } from '@supabase/supabase-js';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -11,6 +12,11 @@ dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Initialize Supabase (Optional for local, required for prod)
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
 
 const app = express();
 app.use(cors());
@@ -134,6 +140,46 @@ app.post('/api/gallery', async (req, res) => {
         const { imageUrl } = req.body;
         if (!imageUrl) return res.status(400).json({ error: 'No image URL' });
 
+        if (supabase) {
+            console.log("Saving to Supabase...");
+            // 1. Upload to Supabase Storage if it's a local/data URL
+            let publicUrl = imageUrl;
+            
+            if (imageUrl.startsWith('/') || imageUrl.startsWith('data:image')) {
+                let buffer;
+                if (imageUrl.startsWith('data:image')) {
+                    const base64Data = imageUrl.replace(/^data:image\/\w+;base64,/, "");
+                    buffer = Buffer.from(base64Data, 'base64');
+                } else {
+                    const sourcePath = path.join(publicPath, imageUrl);
+                    buffer = await fs.readFile(sourcePath);
+                }
+
+                const fileName = `shared_${Date.now()}.png`;
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('gallery')
+                    .upload(fileName, buffer, { contentType: 'image/png' });
+
+                if (uploadError) throw uploadError;
+
+                const { data: urlData } = supabase.storage
+                    .from('gallery')
+                    .getPublicUrl(fileName);
+                
+                publicUrl = urlData.publicUrl;
+            }
+
+            // 2. Insert into DB
+            const { data, error } = await supabase
+                .from('gallery')
+                .insert([{ url: publicUrl }])
+                .select();
+
+            if (error) throw error;
+            return res.json({ success: true, item: data[0] });
+        }
+
+        // FALLBACK TO LOCAL (for local dev)
         const fileName = `shared_${Date.now()}.png`;
         const filePath = path.join(GALLERY_DIR, fileName);
         const publicRelativePath = `/gallery/${fileName}`;
@@ -146,7 +192,6 @@ app.post('/api/gallery', async (req, res) => {
             const base64Data = imageUrl.replace(/^data:image\/\w+;base64,/, "");
             await fs.writeFile(filePath, Buffer.from(base64Data, 'base64'));
         } else if (imageUrl.startsWith('/')) {
-            // Local file move/copy
             const sourcePath = path.join(publicPath, imageUrl);
             await fs.copyFile(sourcePath, filePath);
         }
@@ -174,6 +219,16 @@ app.post('/api/gallery', async (req, res) => {
 
 app.get('/api/gallery', async (req, res) => {
     try {
+        if (supabase) {
+            const { data, error } = await supabase
+                .from('gallery')
+                .select('*')
+                .order('created_at', { ascending: false });
+            
+            if (error) throw error;
+            return res.json(data);
+        }
+
         const data = await fs.readFile(GALLERY_JSON, 'utf-8');
         res.json(JSON.parse(data));
     } catch (error) {

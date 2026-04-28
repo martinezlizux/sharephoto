@@ -9,7 +9,11 @@ services:
       - key: NODE_VERSION
         value: 18.0.0
       - key: REPLICATE_API_TOKEN
-        sync: false # Set this in Render dashboard
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
     # Optional: Disk for persistent gallery (Requires paid plan)
     # disk:
     #   name: gallery-storage
