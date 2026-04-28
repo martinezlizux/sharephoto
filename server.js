@@ -74,13 +74,15 @@ app.post('/api/generate', async (req, res) => {
             generatedUrl = output[0];
         } else if (typeof output === 'string') {
             generatedUrl = output;
-        } else if (output.url) {
+        } else if (output && typeof output.url === 'function') {
+            generatedUrl = output.url();
+        } else if (output && output.url) {
             generatedUrl = output.url;
         } else {
-            generatedUrl = output; // For stream or other types
+            generatedUrl = output; 
         }
 
-        console.log("Replicate output URL:", generatedUrl);
+        console.log("Resolved Generated URL:", typeof generatedUrl === 'string' ? generatedUrl : 'Object/Stream');
 
         // LOCAL CACHE TO PREVENT BROKEN LINKS
         try {
