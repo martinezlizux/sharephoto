@@ -92,7 +92,7 @@ app.post('/api/generate', async (req, res) => {
             generatedUrl = output; 
         }
 
-        console.log("Resolved Generated URL:", typeof generatedUrl === 'string' ? generatedUrl : 'Object/Stream');
+        console.log("Resolved Generated URL:", generatedUrl);
 
         // LOCAL CACHE TO PREVENT BROKEN LINKS
         try {
@@ -100,12 +100,15 @@ app.post('/api/generate', async (req, res) => {
             const tempFilePath = path.join(publicPath, tempFileName);
             
             let buffer;
+            // Handle various possible formats from Replicate
             if (typeof generatedUrl === 'string' && generatedUrl.startsWith('http')) {
                 const imgResponse = await fetch(generatedUrl);
                 if (!imgResponse.ok) throw new Error(`Fetch failed with status ${imgResponse.status}`);
                 buffer = Buffer.from(await imgResponse.arrayBuffer());
+            } else if (generatedUrl && typeof generatedUrl.url === 'string') {
+                const imgResponse = await fetch(generatedUrl.url);
+                buffer = Buffer.from(await imgResponse.arrayBuffer());
             } else if (generatedUrl instanceof ReadableStream || (generatedUrl && typeof generatedUrl.getReader === 'function')) {
-                // Handle stream
                 const reader = generatedUrl.getReader();
                 const chunks = [];
                 while (true) {
@@ -114,7 +117,11 @@ app.post('/api/generate', async (req, res) => {
                     chunks.push(value);
                 }
                 buffer = Buffer.concat(chunks.map(c => Buffer.from(c)));
+            } else if (generatedUrl && typeof generatedUrl.toString === 'function' && generatedUrl.toString().startsWith('http')) {
+                const imgResponse = await fetch(generatedUrl.toString());
+                buffer = Buffer.from(await imgResponse.arrayBuffer());
             } else {
+                console.error("DEBUG: Replicate output structure:", JSON.stringify(generatedUrl, null, 2) || generatedUrl);
                 throw new Error("Unknown output format from Replicate");
             }
 
