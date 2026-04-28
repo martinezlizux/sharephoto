@@ -747,22 +747,32 @@ body {
 
 /* Footer & Other */
 .footer {
-  background: var(--white);
+  background: #111827; /* Gris oscuro elegante */
   padding: 60px 20px;
   text-align: center;
-  border-top: 1px solid #E6E6E6;
   margin-top: auto;
+  color: white;
+}
+
+.footer-logo {
+  height: 50px;
+  margin-bottom: 20px;
 }
 
 .footer-text {
   font-weight: 700;
   font-size: 20px;
-  color: var(--navy-text);
+  color: white;
   margin-bottom: 10px;
 }
 
+.footer p {
+  color: #9CA3AF; /* Gris claro para el copyright */
+  font-size: 14px;
+}
+
 .footer .tagline {
-  color: #808080;
+  color: #9CA3AF;
   font-size: 16px;
   font-weight: 400;
 }
