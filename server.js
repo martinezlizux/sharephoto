@@ -19,8 +19,12 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // ROBUST STATIC SERVING
 const publicPath = path.join(__dirname, 'public');
+const distPath = path.join(__dirname, 'dist');
+
+app.use(express.static(distPath));
 app.use(express.static(publicPath));
-console.log(`Serving static files from: ${publicPath}`);
+
+console.log(`Serving static files from: ${distPath} and ${publicPath}`);
 
 const GALLERY_JSON = path.join(__dirname, 'gallery.json');
 const GALLERY_DIR = path.join(__dirname, 'public', 'gallery');

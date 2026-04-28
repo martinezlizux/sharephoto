@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: spruce-photobooth
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: node server.js
+    envVars:
+      - key: NODE_VERSION
+        value: 18.0.0
+      - key: REPLICATE_API_TOKEN
+        sync: false # Set this in Render dashboard
+    # Optional: Disk for persistent gallery (Requires paid plan)
+    # disk:
+    #   name: gallery-storage
+    #   mountPath: /public/gallery
+    #   sizeGB: 1
