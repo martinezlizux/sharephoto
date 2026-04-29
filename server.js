@@ -62,13 +62,13 @@ app.post('/api/generate', async (req, res) => {
         const replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN });
         const promptTemplates = [
             // FILTRO 1: FIESTA CELEBRACIÓN (Original mejorado)
-            "High-quality, cinematic 3D photographic render in the iconic Pixar animation style. The scene is a faithful transformation of the input photo, maintaining the exact facial features, expressions, and specific clothing of the person in a pixar style. Background: a vibrant studio with colorful balloons, gold metallic confetti, and a festive atmosphere. A friendly cartoon dragon is happily integrated. Soft golden studio lighting.",
-
+            `High-quality, cinematic 3D photographic render in the iconic Pixar animation style. The scene is a faithful transformation of the input photo, maintaining the exact facial features, expressions, and specific clothing of the person in a pixar style. Background: a vibrant studio with colorful balloons, gold metallic confetti, and a festive atmosphere. A friendly cartoon dragon is happily integrated. Soft golden studio lighting.`,
+            
             // FILTRO 2: PIÑATA
-            "High-quality, cinematic 3D photographic render in the iconic Pixar animation style. Faithful transformation of the input photo, exact facial features and clothing. Background: a vibrant children's party setting with a large colorful piñata prominently displayed. The area is decorated with cheerful streamers, balloons, and scattered confetti. Ethereal, soft moonlight filtering through windows and string lights. A small, cute baby dragon is peeking from behind a gift table.",
-
+            `High-quality, cinematic 3D photographic render in the iconic Pixar animation style. Faithful transformation of the input photo, exact facial features and clothing. Background: a vibrant children's party setting with a large colorful piñata prominently displayed. The area is decorated with cheerful streamers, balloons, and scattered confetti. Ethereal, soft moonlight filtering through windows and string lights. A small, cute baby dragon is peeking from behind a gift table.`,
+            
             // FILTRO 3: GLOBOS METALICOS
-            "High-quality, cinematic 3D photographic render in the iconic Pixar animation style. Faithful character transformation maintaining exact facial features and clothing from the input. The background is a professional photography studio professionally decorated backdrop with foil sqaured ballons , scattered confetti. The scene is illuminated by soft studio lighting with gentle rim lights. Floating in mid-air next to the character is the word "Spruce"  in a college kind of promp."
+            `High-quality, cinematic 3D photographic render in the iconic Pixar animation style. Faithful character transformation maintaining exact facial features and clothing from the input. The background is a professional photography studio professionally decorated backdrop with foil squared balloons, scattered confetti. The scene is illuminated by soft studio lighting with gentle rim lights. Floating in mid-air next to the character is the word 'Spruce' in a college kind of style.`
         ];
 
         // Elegir un prompt al azar
