@@ -63,12 +63,12 @@ app.post('/api/generate', async (req, res) => {
         const promptTemplates = [
             // FILTRO 1: FIESTA CELEBRACIÓN (Original mejorado)
             "High-quality, cinematic 3D photographic render in the iconic Pixar animation style. The scene is a faithful transformation of the input photo, maintaining the exact facial features, expressions, and specific clothing of the person in a pixar style. Background: a vibrant studio with colorful balloons, gold metallic confetti, and a festive atmosphere. A friendly cartoon dragon is happily integrated. Soft golden studio lighting.",
-            
-            // FILTRO 2: BOSQUE ENCANTADO
-            "High-quality, cinematic 3D photographic render in the iconic Pixar animation style. Faithful transformation of the input photo, exact facial features and clothing. Background: a magical enchanted forest with glowing bioluminescent flowers, floating magic sparkles, and lush giant plants. A small, cute baby dragon is peeking from behind. Ethereal, soft moonlight filtering through leaves.",
-            
-            // FILTRO 3: TEMPLO MÍSTICO
-            "High-quality, cinematic 3D photographic render in the iconic Pixar animation style. Faithful transformation of the input photo, exact facial features and clothing. Background: an ancient dragon temple with floating stones, mysterious blue energy orbs, and golden artifacts. A wise little dragon is hovering nearby. Dramatic, cinematic lighting with a magical blue glow."
+
+            // FILTRO 2: PIÑATA
+            "High-quality, cinematic 3D photographic render in the iconic Pixar animation style. Faithful transformation of the input photo, exact facial features and clothing. Background: a vibrant children's party setting with a large colorful piñata prominently displayed. The area is decorated with cheerful streamers, balloons, and scattered confetti. Ethereal, soft moonlight filtering through windows and string lights. A small, cute baby dragon is peeking from behind a gift table.",
+
+            // FILTRO 3: GLOBOS METALICOS
+            "High-quality, cinematic 3D photographic render in the iconic Pixar animation style. Faithful character transformation maintaining exact facial features and clothing from the input. The background is a professional photography studio professionally decorated backdrop with foil sqaured ballons , scattered confetti. The scene is illuminated by soft studio lighting with gentle rim lights. Floating in mid-air next to the character is the word "Spruce"  in a college kind of promp."
         ];
 
         // Elegir un prompt al azar
@@ -101,7 +101,7 @@ app.post('/api/generate', async (req, res) => {
         } else if (output && output.url) {
             generatedUrl = output.url;
         } else {
-            generatedUrl = output; 
+            generatedUrl = output;
         }
 
         console.log("Resolved Generated URL:", generatedUrl);
@@ -110,7 +110,7 @@ app.post('/api/generate', async (req, res) => {
         try {
             const tempFileName = `preview_${Date.now()}.png`;
             const tempFilePath = path.join(publicPath, tempFileName);
-            
+
             let buffer;
             // Handle various possible formats from Replicate
             if (typeof generatedUrl === 'string' && generatedUrl.startsWith('http')) {
@@ -162,7 +162,7 @@ app.post('/api/gallery', async (req, res) => {
         if (supabase) {
             console.log("--- Saving to Supabase ---");
             let publicUrl = imageUrl;
-            
+
             // ALWAYS upload to Supabase Storage to ensure persistence
             try {
                 let buffer;
@@ -184,7 +184,7 @@ app.post('/api/gallery', async (req, res) => {
 
                 const fileName = `dragon_${Date.now()}.png`;
                 console.log(`Uploading ${fileName} to 'gallery' bucket...`);
-                
+
                 const { data: uploadData, error: uploadError } = await supabase.storage
                     .from('gallery')
                     .upload(fileName, buffer, { contentType, upsert: true });
@@ -197,7 +197,7 @@ app.post('/api/gallery', async (req, res) => {
                 const { data: urlData } = supabase.storage
                     .from('gallery')
                     .getPublicUrl(fileName);
-                
+
                 publicUrl = urlData.publicUrl;
                 console.log("Supabase Public URL:", publicUrl);
             } catch (storageErr) {
@@ -217,7 +217,7 @@ app.post('/api/gallery', async (req, res) => {
                 console.error("Supabase DB Error:", error);
                 throw new Error(`Database Error: ${error.message}`);
             }
-            
+
             console.log("Successfully saved to Supabase!");
             return res.json({ success: true, item: data[0] });
         }
@@ -267,7 +267,7 @@ app.get('/api/gallery', async (req, res) => {
                 .from('gallery')
                 .select('*')
                 .order('created_at', { ascending: false });
-            
+
             if (error) throw error;
             return res.json(data);
         }
@@ -287,7 +287,7 @@ app.delete('/api/gallery/:id', async (req, res) => {
                 .from('gallery')
                 .delete()
                 .eq('id', id);
-            
+
             if (error) throw error;
             return res.json({ success: true });
         }
