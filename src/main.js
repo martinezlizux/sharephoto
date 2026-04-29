@@ -77,7 +77,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function showModal(imgSrc) {
     photoModal.classList.remove('hidden');
     transformedPhotoUrl = null;
-    modalStatus.textContent = "Ready to add some magic?";
+    
+    // Reset UI state for new photo
+    shareGalleryBtn.classList.add('hidden');
+    applyFilterBtn.classList.remove('hidden');
+    filterSelectorArea.classList.remove('hidden');
+    modalStatus.textContent = "Ready for the transformation?";
 
     viewfinder.innerHTML = `
       <div class="processing-state hidden" id="processingState">
@@ -164,9 +169,15 @@ document.addEventListener('DOMContentLoaded', () => {
       clearInterval(timerInterval);
       proc.classList.add('hidden');
       viewfinder.classList.remove('processing');
+      
+      // Post-generation state
+      applyFilterBtn.classList.add('hidden');
+      shareGalleryBtn.classList.remove('hidden');
+      filterSelectorArea.classList.add('hidden');
+      newPhotoBtn.classList.remove('hidden');
+      
       applyFilterBtn.disabled = false;
       newPhotoBtn.disabled = false;
-      filterSelectorArea.style.display = 'block';
     }
   });
 
