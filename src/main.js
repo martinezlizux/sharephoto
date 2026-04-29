@@ -81,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     shareGalleryBtn.classList.add('hidden');
     applyFilterBtn.classList.remove('hidden');
     filterSelectorArea.classList.remove('hidden');
+    filterSelectorArea.style.display = ''; // Clear inline styles
     modalStatus.textContent = "Ready for the transformation?";
 
     viewfinder.innerHTML = `
@@ -118,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     proc.classList.remove('hidden');
     viewfinder.classList.add('processing');
     applyFilterBtn.disabled = true;
-    filterSelectorArea.style.display = 'none';
+    filterSelectorArea.classList.add('hidden');
     modalStatus.textContent = "Summoning the dragon...";
     
     let timeLeft = 8;
@@ -150,6 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
         transformedPhotoUrl = data.imageUrl;
         previewImage.src = transformedPhotoUrl;
         modalStatus.textContent = "Wow! Looking legendary!";
+        shareGalleryBtn.classList.remove('hidden'); // SHOW SHARE
+        applyFilterBtn.classList.add('hidden');    // HIDE APPLY
         shareGalleryBtn.disabled = false;
 
         previewImage.onerror = () => {
@@ -162,18 +165,19 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.error("AI Error:", error);
       modalStatus.innerHTML = `<span style="color: #ef4444">Error: ${error.message}</span>`;
-      shareGalleryBtn.disabled = true;
+      shareGalleryBtn.classList.add('hidden');
     } finally {
       clearInterval(timerInterval);
       proc.classList.add('hidden');
       viewfinder.classList.remove('processing');
       
-      // Post-generation state
-      applyFilterBtn.classList.add('hidden');
-      shareGalleryBtn.classList.remove('hidden');
-      filterSelectorArea.classList.add('hidden');
-      
       applyFilterBtn.disabled = false;
+      // Note: We don't show the filter area here if successful, 
+      // only when starting a NEW photo or if it failed.
+      if (modalStatus.textContent.includes('Error')) {
+        filterSelectorArea.classList.remove('hidden');
+        applyFilterBtn.classList.remove('hidden');
+      }
     }
   });
 

@@ -67,8 +67,8 @@ app.post('/api/generate', async (req, res) => {
             // FILTRO 2: PIÑATA
             `High-quality, cinematic 3D photographic render in the iconic Pixar animation style. Faithful transformation of the input photo, exact facial features and clothing. Background: a vibrant children's party setting with a large colorful piñata prominently displayed. The area is decorated with cheerful streamers, balloons, and scattered confetti. Ethereal, soft moonlight filtering through windows and string lights. A small, cute baby dragon is peeking from behind a gift table.`,
 
-            // FILTRO 3: MONOGRAPHIC BACKGROUND
-            `High-quality, cinematic 3D portrait render in the distinct Pixar animation style. The character must be a faithful transformation based on the input photo, maintaining exact facial features, likeness, and wearing the identical clothing. Behind the character, the word 'SPRUCE' is rendered in oversized, pillowy 3D typography with a soft, tactile plastic texture. Minimalist pastel monochrome background, soft global illumination, and subtle rim lighting to emphasize shapes and volume. Clean, high-end commercial design with friendly premium branding, 8k resolution.`
+            // FILTRO 3: BACKGROUND WITH TEXT
+            `High-quality, cinematic 3D portrait render in the distinct Pixar animation style. The character must be a faithful transformation based on the input photo, maintaining exact facial features, likeness, and wearing the identical clothing. Behind the character, the word 'SPRUCE' is rendered in oversized, pillowy 3D typography with a soft, tactile plastic texture. Minimalist monochrome background, soft global illumination, and subtle rim lighting to emphasize shapes and volume. Clean, high-end commercial design with friendly premium branding, 8k resolution.`
         ];
 
         // Usar el filtro seleccionado o el primero por defecto
