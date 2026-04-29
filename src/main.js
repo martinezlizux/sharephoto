@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModal = document.getElementById('closeModal');
   const viewfinder = document.getElementById('photoViewfinder');
   const applyFilterBtn = document.getElementById('applyFilterBtn');
-  const newPhotoBtn = document.getElementById('newPhotoBtn');
   const shareGalleryBtn = document.getElementById('shareGalleryBtn');
   const galleryGrid = document.getElementById('galleryGrid');
   const processingState = document.getElementById('processingState');
@@ -119,7 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
     proc.classList.remove('hidden');
     viewfinder.classList.add('processing');
     applyFilterBtn.disabled = true;
-    newPhotoBtn.disabled = true;
     filterSelectorArea.style.display = 'none';
     modalStatus.textContent = "Summoning the dragon...";
     
@@ -174,17 +172,11 @@ document.addEventListener('DOMContentLoaded', () => {
       applyFilterBtn.classList.add('hidden');
       shareGalleryBtn.classList.remove('hidden');
       filterSelectorArea.classList.add('hidden');
-      newPhotoBtn.classList.remove('hidden');
       
       applyFilterBtn.disabled = false;
-      newPhotoBtn.disabled = false;
     }
   });
 
-  // NEW PHOTO
-  newPhotoBtn.addEventListener('click', () => {
-    photoInput.click();
-  });
 
   // SHARE
   shareGalleryBtn.addEventListener('click', async () => {

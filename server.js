@@ -63,12 +63,12 @@ app.post('/api/generate', async (req, res) => {
         const promptTemplates = [
             // FILTRO 1: FIESTA CELEBRACIÓN (Original mejorado)
             `High-quality, cinematic 3D photographic render in the iconic Pixar animation style. The scene is a faithful transformation of the input photo, maintaining the exact facial features, expressions, and specific clothing of the person in a pixar style. Background: a vibrant studio with colorful balloons, gold metallic confetti, and a festive atmosphere. A friendly cartoon dragon is happily integrated. Soft golden studio lighting.`,
-            
+
             // FILTRO 2: PIÑATA
             `High-quality, cinematic 3D photographic render in the iconic Pixar animation style. Faithful transformation of the input photo, exact facial features and clothing. Background: a vibrant children's party setting with a large colorful piñata prominently displayed. The area is decorated with cheerful streamers, balloons, and scattered confetti. Ethereal, soft moonlight filtering through windows and string lights. A small, cute baby dragon is peeking from behind a gift table.`,
-            
-            // FILTRO 3: GLOBOS METALICOS
-            `High-quality, cinematic 3D photographic render in the iconic Pixar animation style. Faithful character transformation maintaining exact facial features and clothing from the input. The background is a professional photography studio professionally decorated backdrop with foil squared balloons, scattered confetti. The scene is illuminated by soft studio lighting with gentle rim lights. Floating in mid-air next to the character is the word 'Spruce' in a college kind of style.`
+
+            // FILTRO 3: MONOGRAPHIC BACKGROUND
+            `High-quality, cinematic 3D portrait render in the distinct Pixar animation style. The character must be a faithful transformation based on the input photo, maintaining exact facial features, likeness, and wearing the identical clothing. Behind the character, the word 'SPRUCE' is rendered in oversized, pillowy 3D typography with a soft, tactile plastic texture. Minimalist pastel monochrome background, soft global illumination, and subtle rim lighting to emphasize shapes and volume. Clean, high-end commercial design with friendly premium branding, 8k resolution.`
         ];
 
         // Usar el filtro seleccionado o el primero por defecto
