@@ -33,6 +33,15 @@ app.use(express.static(publicPath));
 
 console.log(`Serving static files from: ${distPath} and ${publicPath}`);
 
+// Manejar rutas de landings (/l/nombre-landing) para que sirvan el index.html
+app.get('/l/:landingId', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'), (err) => {
+        if (err) {
+            res.sendFile(path.join(publicPath, 'index.html'));
+        }
+    });
+});
+
 const GALLERY_JSON = path.join(__dirname, 'gallery.json');
 const GALLERY_DIR = path.join(__dirname, 'public', 'gallery');
 

@@ -12,20 +12,31 @@ document.addEventListener('DOMContentLoaded', () => {
   async function initApp() {
     try {
       const urlParams = new URLSearchParams(window.location.search);
-      const landingName = urlParams.get('landing');
-      let config;
+      const pathParts = window.location.pathname.split('/');
+      
+      // Prioridad 1: Parámetro ?landing=
+      // Prioridad 2: Ruta /l/nombre-landing
+      // Prioridad 3: Default 'spruce'
+      let landingName = urlParams.get('landing');
+      if (!landingName && pathParts[1] === 'l' && pathParts[2]) {
+        landingName = pathParts[2];
+      }
+      if (!landingName) landingName = 'spruce';
 
-      if (landingName) {
-        console.log(`🚀 Loading Landing: ${landingName}`);
-        const res = await fetch(`/landings/${landingName}/config.json`);
-        config = await res.json();
+      console.log(`🚀 Loading Landing: ${landingName}`);
+      const res = await fetch(`/landings/${landingName}/config.json`);
+      
+      if (!res.ok) {
+        console.warn("Landing not found, falling back to spruce");
+        const fallbackRes = await fetch(`/landings/spruce/config.json`);
+        const config = await fallbackRes.json();
         currentLandingId = config.landingId;
-      } else {
-        const themeName = urlParams.get('theme') || 'current_theme';
-        const res = await fetch(`/themes/${themeName}.json`);
-        config = await res.json();
+        applyConfig(config);
+        return;
       }
 
+      const config = await res.json();
+      currentLandingId = config.landingId;
       applyConfig(config);
     } catch (e) {
       console.warn("Error loading config, using defaults:", e);
