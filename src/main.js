@@ -4,6 +4,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModal = document.getElementById('closeModal');
   const viewfinder = document.getElementById('photoViewfinder');
   const applyFilterBtn = document.getElementById('applyFilterBtn');
+
+  // THEME ENGINE: Apply custom theme tokens
+  async function initTheme() {
+    try {
+      const res = await fetch('/themes/current_theme.json');
+      const theme = await res.json();
+      const root = document.documentElement;
+      Object.entries(theme).forEach(([key, value]) => {
+        root.style.setProperty(`--${key}`, value);
+      });
+      console.log("🎨 Theme applied successfully");
+    } catch (e) {
+      console.warn("Using default CSS theme");
+    }
+  }
+  
+  initTheme();
   const shareGalleryBtn = document.getElementById('shareGalleryBtn');
   const galleryGrid = document.getElementById('galleryGrid');
   const processingState = document.getElementById('processingState');
