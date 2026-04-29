@@ -13,14 +13,28 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const urlParams = new URLSearchParams(window.location.search);
       const pathParts = window.location.pathname.split('/');
+      const hostname = window.location.hostname;
       
-      // Prioridad 1: Parámetro ?landing=
-      // Prioridad 2: Ruta /l/nombre-landing
-      // Prioridad 3: Default 'spruce'
+      // PRIORIDADES DE DETECCIÓN:
+      // 1. Parámetro ?landing= (para pruebas rápidas)
+      // 2. Ruta /l/nombre-landing
+      // 3. Subdominio (ej: spruce.sharephoto.fun -> spruce)
+      // 4. Default 'spruce'
+      
       let landingName = urlParams.get('landing');
+      
       if (!landingName && pathParts[1] === 'l' && pathParts[2]) {
         landingName = pathParts[2];
       }
+      
+      if (!landingName) {
+        const parts = hostname.split('.');
+        // Si hay más de 2 partes (ej: spruce.sharephoto.fun), la primera es el subdominio
+        if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'sharephoto') {
+          landingName = parts[0];
+        }
+      }
+      
       if (!landingName) landingName = 'spruce';
 
       console.log(`🚀 Loading Landing: ${landingName}`);
