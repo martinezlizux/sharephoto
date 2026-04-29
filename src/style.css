@@ -1,7 +1,7 @@
 :root {
   --primary: #1C2659;
   --primary-dark: #121A3D;
-  --primary-text: #1C2659;
+  --body: #1C2659;
   --hero-gradient: linear-gradient(180deg, #1835AB 0%, #122870 100%);
   --light-blue: #D3D9FA;
   --subtitle-blue: #CBCCFA;
@@ -10,6 +10,8 @@
   --white: #ffffff;
   --bg-color: #F6F6FA;
   --font-primary: 'Inter', sans-serif;
+  --radius: 16px;
+  --radius-btn: 32px;
 }
 
 * {
@@ -22,7 +24,7 @@ html,
 body {
   font-family: var(--font-primary);
   background-color: var(--bg-color);
-  color: var(--primary-text);
+  color: var(--body);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
@@ -45,7 +47,7 @@ body {
   text-align: center;
   font-weight: 700;
   font-size: 24px;
-  color: var(--primary-text);
+  color: var(--body);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   position: relative;
   z-index: 10;
@@ -332,8 +334,8 @@ body {
 .btn-filter,
 .btn-secondary,
 .btn-share {
-  padding: 10px 16px;
-  border-radius: 16px;
+  padding: 10px var(--radius);
+  border-radius: var(--radius);
   border: 1.5px solid #E6E6E6;
   font-weight: 600;
   font-size: 14px;
@@ -374,7 +376,7 @@ body {
 
 .preview-header p {
   color: #666;
-  font-size: 16px;
+  font-size: var(--radius);
 }
 
 .image-wrapper {
@@ -550,10 +552,10 @@ body {
 .btn-primary,
 .btn-secondary {
   width: 100%;
-  padding: 16px;
+  padding: var(--radius);
   font-weight: 800;
-  font-size: 16px;
-  border-radius: 16px;
+  font-size: var(--radius);
+  border-radius: var(--radius);
   border: none;
   cursor: pointer;
   transition: all 0.2s;
@@ -609,12 +611,12 @@ body {
   align-items: center;
   gap: 8px;
   background: white;
-  padding: 8px 16px;
+  padding: 8px var(--radius);
   border-radius: 20px;
   font-weight: 700;
   color: var(--primary);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  margin-bottom: 16px;
+  margin-bottom: var(--radius);
 }
 
 .gallery-title {
@@ -645,7 +647,7 @@ body {
 @media (max-width: 500px) {
   .gallery-grid {
     grid-template-columns: repeat(1, 1fr);
-    gap: 16px;
+    gap: var(--radius);
   }
 }
 
@@ -692,7 +694,7 @@ body {
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
-  padding: 16px;
+  padding: var(--radius);
   gap: 12px;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -773,7 +775,7 @@ body {
 
 .footer .tagline {
   color: #9CA3AF;
-  font-size: 16px;
+  font-size: var(--radius);
   font-weight: 400;
 }
 
@@ -812,7 +814,7 @@ body {
 
   .headline {
     order: 2;
-    font-size: 32px;
+    font-size: var(--radius-btn);
     color: white;
     text-align: center;
     margin-bottom: 12px;
@@ -842,7 +844,7 @@ body {
     width: 100%;
     display: flex;
     justify-content: center;
-    margin-bottom: 16px;
+    margin-bottom: var(--radius);
   }
 
   .btn-upload {
@@ -852,7 +854,7 @@ body {
     background: #FFB800;
     border: none;
     box-shadow: 0 4px 0 #121A3D; /* Dark shadow from Figma */
-    border-radius: 32px;
+    border-radius: var(--radius-btn);
     padding: 0;
   }
 

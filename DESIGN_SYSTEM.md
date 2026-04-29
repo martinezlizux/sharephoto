@@ -7,11 +7,12 @@ Todos los colores están centralizados en `:root` dentro de `style.css`. Cambian
 
 | Variable | Valor Actual | Uso |
 | :--- | :--- | :--- |
-| `--primary` | `#1835AB` | Color principal (Hero, botones primarios) |
-| `--accent` | `#FFB800` | Color de acento (Botón Upload, Highlight) |
+| `--primary` | `#1835AB` | Color principal (Hero, elementos clave) |
+| `--accent` | `#FFB800` | Color de acento (Botones de acción, realces) |
+| `--body` | `#1C2659` | Color del texto principal |
 | `--hero-gradient` | `linear-gradient(...)` | Fondo dinámico del Hero |
-| `--white` | `#FFFFFF` | Fondos de secciones y tarjetas |
-| `--gray-light` | `#F8FAFC` | Fondos secundarios y estados hover |
+| `--radius` | `16px` | Radio de bordes para tarjetas y modales |
+| `--radius-btn` | `32px` | Radio de bordes para botones (Pill style) |
 
 **Para cambiar el tema:** Simplemente actualiza estos valores hexadecimales.
 
