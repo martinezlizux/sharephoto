@@ -60,8 +60,20 @@ app.post('/api/generate', async (req, res) => {
         }
 
         const replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN });
-        // USER SPECIFIED DETAILED PROMPT
-        const promptText = "High-quality, cinematic 3D photographic render in the iconic Pixar animation style. The scene is a faithful transformation of the input photo, maintaining the exact facial features, expressions, and specific clothing of all persons present in a pixar style. The original background is completely replaced by a vibrant, professionally decorated studio setting. This new environment is brimming with colorful balloons of various sizes, cascading metallic confetti (gold and primary colors) caught in mid-air, and a festive atmosphere. One friendly-looking cartoon dragon, with large expressive eyes and distinct scaled textures, are happily integrated into the scene. The lighting is soft, golden, and warm, mimicking cozy studio spotlights and fairy lights, casting a magical glow over the subjects. The overall composition is joyful and full of life, like a memorable photoshoot.";
+        const promptTemplates = [
+            // FILTRO 1: FIESTA CELEBRACIÓN (Original mejorado)
+            "High-quality, cinematic 3D photographic render in the iconic Pixar animation style. The scene is a faithful transformation of the input photo, maintaining the exact facial features, expressions, and specific clothing of the person in a pixar style. Background: a vibrant studio with colorful balloons, gold metallic confetti, and a festive atmosphere. A friendly cartoon dragon is happily integrated. Soft golden studio lighting.",
+            
+            // FILTRO 2: BOSQUE ENCANTADO
+            "High-quality, cinematic 3D photographic render in the iconic Pixar animation style. Faithful transformation of the input photo, exact facial features and clothing. Background: a magical enchanted forest with glowing bioluminescent flowers, floating magic sparkles, and lush giant plants. A small, cute baby dragon is peeking from behind. Ethereal, soft moonlight filtering through leaves.",
+            
+            // FILTRO 3: TEMPLO MÍSTICO
+            "High-quality, cinematic 3D photographic render in the iconic Pixar animation style. Faithful transformation of the input photo, exact facial features and clothing. Background: an ancient dragon temple with floating stones, mysterious blue energy orbs, and golden artifacts. A wise little dragon is hovering nearby. Dramatic, cinematic lighting with a magical blue glow."
+        ];
+
+        // Elegir un prompt al azar
+        const randomPrompt = promptTemplates[Math.floor(Math.random() * promptTemplates.length)];
+        console.log("Using random filter theme...");
 
         console.log("Calling SDXL for stable transformation...");
         const output = await replicate.run(
@@ -69,7 +81,7 @@ app.post('/api/generate', async (req, res) => {
             {
                 input: {
                     image: image,
-                    prompt: promptText,
+                    prompt: randomPrompt,
                     aspect_ratio: "1:1"
                 }
             }
