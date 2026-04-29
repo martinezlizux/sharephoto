@@ -33,12 +33,24 @@ app.use(express.static(publicPath));
 
 console.log(`Serving static files from: ${distPath} and ${publicPath}`);
 
-// Manejar rutas de landings (/l/nombre-landing) para que sirvan el index.html
+// Manejar la página de ventas en el dominio principal
+app.get('/', (req, res) => {
+    const hostname = req.hostname;
+    // Si es el dominio principal, mostrar la página de ventas
+    if (hostname === 'sharephoto.fun' || hostname === 'www.sharephoto.fun') {
+        res.sendFile(path.join(publicPath, 'sales.html'));
+    } else {
+        // Para subdominios, mostrar la app principal
+        res.sendFile(path.join(distPath, 'index.html'), (err) => {
+            if (err) res.sendFile(path.join(publicPath, 'index.html'));
+        });
+    }
+});
+
+// Manejar rutas de landings (/l/nombre-landing)
 app.get('/l/:landingId', (req, res) => {
     res.sendFile(path.join(distPath, 'index.html'), (err) => {
-        if (err) {
-            res.sendFile(path.join(publicPath, 'index.html'));
-        }
+        if (err) res.sendFile(path.join(publicPath, 'index.html'));
     });
 });
 
