@@ -95,23 +95,10 @@
             </div>
           </div>
 
-          <!-- Filter Selector -->
-          <div class="filter-selection-area" id="filterSelector">
+          <!-- Filter Selector (Populated dynamically by JS) -->
+          <div class="filter-selection-area hidden" id="filterSelector">
             <p class="filter-label">Choose your World:</p>
-            <div class="filter-options">
-              <div class="filter-card active" data-filter="0">
-                <div class="filter-preview party"></div>
-                <span>Party</span>
-              </div>
-              <div class="filter-card" data-filter="1">
-                <div class="filter-preview pinata"></div>
-                <span>Piñata</span>
-              </div>
-              <div class="filter-card" data-filter="2">
-                <div class="filter-preview balloons"></div>
-                <span>Text background</span>
-              </div>
-            </div>
+            <div class="filter-options" id="filterOptionsContainer"></div>
           </div>
 
           <div class="modal-actions">

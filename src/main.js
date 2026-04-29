@@ -18,8 +18,34 @@ document.addEventListener('DOMContentLoaded', () => {
       const theme = await res.json();
       const root = document.documentElement;
       Object.entries(theme).forEach(([key, value]) => {
-        root.style.setProperty(`--${key}`, value);
+        if (key !== 'filters') {
+          root.style.setProperty(`--${key}`, value);
+        }
       });
+
+      // Render filters dynamically
+      if (theme.filters && theme.filters.length > 0) {
+        const container = document.getElementById('filterOptionsContainer');
+        container.innerHTML = '';
+        theme.filters.forEach((file, index) => {
+          const name = file.replace('.md', '').replace('-', ' ');
+          const card = document.createElement('div');
+          card.className = `filter-card \${index === 0 ? 'active' : ''}`;
+          card.dataset.filterFile = file;
+          card.innerHTML = `
+            <div class="filter-preview" style="background: var(--accent); opacity: \${1 - index * 0.2}"></div>
+            <span style="text-transform: capitalize;">\${name}</span>
+          `;
+          card.addEventListener('click', () => {
+            document.querySelectorAll('.filter-card').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            selectedFilterFile = file;
+          });
+          container.appendChild(card);
+          if (index === 0) selectedFilterFile = file;
+        });
+      }
+
       console.log("🎨 Theme applied successfully");
     } catch (e) {
       console.warn("Theme not found or error loading. Using default CSS theme.");
@@ -35,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentPhotoBase64 = null;
   let transformedPhotoUrl = null;
   let previewImage = null;
-  let selectedFilter = 0;
+  let selectedFilterFile = "";
 
   // INITIAL LOAD
   const urlParams = new URLSearchParams(window.location.search);
@@ -43,18 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
   
   loadGallery();
 
-  // Filter Selection Logic
-  const filterCards = document.querySelectorAll('.filter-card');
+  // REMOVED: Static Filter Selection Logic
   const filterSelectorArea = document.getElementById('filterSelector');
-  
-  filterCards.forEach(card => {
-    card.addEventListener('click', () => {
-      filterCards.forEach(c => c.classList.remove('active'));
-      card.classList.add('active');
-      selectedFilter = parseInt(card.dataset.filter);
-      console.log("Selected filter:", selectedFilter);
-    });
-  });
 
   // UPLOAD HANDLER
   photoInput.addEventListener('change', (e) => {
@@ -164,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           image: currentPhotoBase64,
-          filterIndex: selectedFilter 
+          filterFile: selectedFilterFile 
         })
       });
 

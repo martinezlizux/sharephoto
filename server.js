@@ -52,7 +52,7 @@ app.use((req, res, next) => {
 app.post('/api/generate', async (req, res) => {
     console.log("--- AI Generation Request ---");
     try {
-        const { image, filterIndex } = req.body;
+        const { image, filterFile } = req.body;
         if (!image) return res.status(400).json({ error: "Image is required" });
 
         if (!process.env.REPLICATE_API_TOKEN) {
@@ -62,17 +62,16 @@ app.post('/api/generate', async (req, res) => {
 
         const replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN });
         const filtersDir = path.join(__dirname, 'filters');
-        let promptTemplates = [];
+        
+        let selectedPrompt = "High-quality Pixar style transformation";
         try {
-            const files = fsSync.readdirSync(filtersDir).filter(f => f.endsWith('.md')).sort();
-            promptTemplates = files.map(file => fsSync.readFileSync(path.join(filtersDir, file), 'utf8').trim());
+            const fileName = filterFile || 'party.md';
+            const filePath = path.join(filtersDir, fileName);
+            selectedPrompt = fsSync.readFileSync(filePath, 'utf8').trim();
+            console.log(`Using selected filter: ${fileName}`);
         } catch (e) {
-            promptTemplates = ["High-quality Pixar style transformation"];
+            console.warn("Filter not found, using fallback.");
         }
-
-        // Usar el filtro seleccionado o el primero por defecto
-        const selectedPrompt = promptTemplates[filterIndex] || promptTemplates[0];
-        console.log(`Using selected filter theme: ${filterIndex}`);
 
         console.log("Calling SDXL for stable transformation...");
         const output = await replicate.run(
