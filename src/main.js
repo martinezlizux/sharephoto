@@ -5,10 +5,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const viewfinder = document.getElementById('photoViewfinder');
   const applyFilterBtn = document.getElementById('applyFilterBtn');
 
-  // THEME ENGINE: Apply custom theme tokens
+  // THEME ENGINE: Apply custom theme tokens from URL or default
   async function initTheme() {
     try {
-      const res = await fetch('/themes/current_theme.json');
+      const urlParams = new URLSearchParams(window.location.search);
+      const themeName = urlParams.get('theme') || 'current_theme';
+      console.log(`🎨 Loading theme: ${themeName}`);
+      
+      const res = await fetch(`/themes/${themeName}.json`);
+      if (!res.ok) throw new Error("Theme not found");
+      
       const theme = await res.json();
       const root = document.documentElement;
       Object.entries(theme).forEach(([key, value]) => {
@@ -16,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       console.log("🎨 Theme applied successfully");
     } catch (e) {
-      console.warn("Using default CSS theme");
+      console.warn("Theme not found or error loading. Using default CSS theme.");
     }
   }
   

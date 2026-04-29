@@ -1,0 +1,9 @@
+{
+  "primary": "#0054A6",
+  "primary-dark": "#003A73",
+  "accent": "#FDB913",
+  "body": "#FFFFFF",
+  "hero-gradient": "linear-gradient(135deg, #0054A6 0%, #00BFFF 100%)",
+  "radius": "12px",
+  "radius-btn": "20px"
+}
