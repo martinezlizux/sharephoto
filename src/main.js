@@ -13,12 +13,26 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentPhotoBase64 = null;
   let transformedPhotoUrl = null;
   let previewImage = null;
+  let selectedFilter = 0;
 
   // INITIAL LOAD
   const urlParams = new URLSearchParams(window.location.search);
   const isAdmin = urlParams.get('admin') === 'spruce';
   
   loadGallery();
+
+  // Filter Selection Logic
+  const filterCards = document.querySelectorAll('.filter-card');
+  const filterSelectorArea = document.getElementById('filterSelector');
+  
+  filterCards.forEach(card => {
+    card.addEventListener('click', () => {
+      filterCards.forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      selectedFilter = parseInt(card.dataset.filter);
+      console.log("Selected filter:", selectedFilter);
+    });
+  });
 
   // UPLOAD HANDLER
   photoInput.addEventListener('change', (e) => {
@@ -98,7 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const processingText = document.getElementById('processingText');
     
     proc.classList.remove('hidden');
+    viewfinder.classList.add('processing');
     applyFilterBtn.disabled = true;
+    newPhotoBtn.disabled = true;
+    filterSelectorArea.style.display = 'none';
     modalStatus.textContent = "Summoning the dragon...";
     
     let timeLeft = 8;
@@ -118,7 +135,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: currentPhotoBase64 })
+        body: JSON.stringify({ 
+          image: currentPhotoBase64,
+          filterIndex: selectedFilter 
+        })
       });
 
       const data = await response.json();
@@ -143,6 +163,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } finally {
       clearInterval(timerInterval);
       proc.classList.add('hidden');
+      viewfinder.classList.remove('processing');
+      applyFilterBtn.disabled = false;
+      newPhotoBtn.disabled = false;
+      filterSelectorArea.style.display = 'block';
     }
   });
 

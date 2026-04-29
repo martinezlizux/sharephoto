@@ -51,8 +51,8 @@ app.use((req, res, next) => {
 app.post('/api/generate', async (req, res) => {
     console.log("--- AI Generation Request ---");
     try {
-        const { image } = req.body;
-        if (!image) return res.status(400).json({ error: 'No image uploaded' });
+        const { image, filterIndex } = req.body;
+        if (!image) return res.status(400).json({ error: "Image is required" });
 
         if (!process.env.REPLICATE_API_TOKEN) {
             console.warn("REPLICATE_API_TOKEN missing. Using simulation.");
@@ -71,9 +71,9 @@ app.post('/api/generate', async (req, res) => {
             `High-quality, cinematic 3D photographic render in the iconic Pixar animation style. Faithful character transformation maintaining exact facial features and clothing from the input. The background is a professional photography studio professionally decorated backdrop with foil squared balloons, scattered confetti. The scene is illuminated by soft studio lighting with gentle rim lights. Floating in mid-air next to the character is the word 'Spruce' in a college kind of style.`
         ];
 
-        // Elegir un prompt al azar
-        const randomPrompt = promptTemplates[Math.floor(Math.random() * promptTemplates.length)];
-        console.log("Using random filter theme...");
+        // Usar el filtro seleccionado o el primero por defecto
+        const selectedPrompt = promptTemplates[filterIndex] || promptTemplates[0];
+        console.log(`Using selected filter theme: ${filterIndex}`);
 
         console.log("Calling SDXL for stable transformation...");
         const output = await replicate.run(
@@ -81,7 +81,7 @@ app.post('/api/generate', async (req, res) => {
             {
                 input: {
                     image: image,
-                    prompt: randomPrompt,
+                    prompt: selectedPrompt,
                     aspect_ratio: "1:1"
                 }
             }
