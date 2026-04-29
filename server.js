@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import Replicate from 'replicate';
 import { createClient } from '@supabase/supabase-js';
 import fs from 'fs/promises';
+import fsSync from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -60,16 +61,14 @@ app.post('/api/generate', async (req, res) => {
         }
 
         const replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN });
-        const promptTemplates = [
-            // FILTRO 1: FIESTA CELEBRACIÓN (Original mejorado)
-            `High-quality, cinematic 3D photographic render in the iconic Pixar animation style. The scene is a faithful transformation of the input photo, maintaining the exact facial features, expressions, and specific clothing of the person in a pixar style. Background: a vibrant studio with colorful balloons, gold metallic confetti, and a festive atmosphere. A friendly cartoon dragon is happily integrated. Soft golden studio lighting.`,
-
-            // FILTRO 2: PIÑATA
-            `High-quality, cinematic 3D photographic render in the iconic Pixar animation style. Faithful transformation of the input photo, exact facial features and clothing. Background: a vibrant children's party setting with a large colorful piñata prominently displayed. The area is decorated with cheerful streamers, balloons, and scattered confetti. Ethereal, soft moonlight filtering through windows and string lights. A small, cute baby dragon is peeking from behind a gift table.`,
-
-            // FILTRO 3: BACKGROUND WITH TEXT
-            `High-quality, cinematic 3D portrait render in the distinct Pixar animation style. The character must be a faithful transformation based on the input photo, maintaining exact facial features, likeness, and wearing the identical clothing. Behind the character, the word 'SPRUCE' is rendered in oversized, pillowy 3D typography with a soft, tactile plastic texture. Minimalist monochrome background, soft global illumination, and subtle rim lighting to emphasize shapes and volume. Clean, high-end commercial design with friendly premium branding, 8k resolution.`
-        ];
+        const filtersDir = path.join(__dirname, 'filters');
+        let promptTemplates = [];
+        try {
+            const files = fsSync.readdirSync(filtersDir).filter(f => f.endsWith('.md')).sort();
+            promptTemplates = files.map(file => fsSync.readFileSync(path.join(filtersDir, file), 'utf8').trim());
+        } catch (e) {
+            promptTemplates = ["High-quality Pixar style transformation"];
+        }
 
         // Usar el filtro seleccionado o el primero por defecto
         const selectedPrompt = promptTemplates[filterIndex] || promptTemplates[0];

@@ -1,0 +1,1 @@
+High-quality, 3D voxel art style render, reminiscent of Pixar but with a distinct pixelated blocky texture. Faithful transformation of the input photo. The background is a retro video game level with blocky clouds and pixelated trees. Bright, saturated colors and flat, clean lighting.

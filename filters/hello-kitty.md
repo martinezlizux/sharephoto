@@ -1,0 +1,1 @@
+High-quality, cinematic 3D portrait render in the distinct Pixar animation style. The character must be a faithful transformation based on the input photo. The background is a magical Hello Kitty world with giant pink bows, heart-shaped clouds, and cute pastel scenery. Soft, bubbly textures and warm, cheerful lighting.
