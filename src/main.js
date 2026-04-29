@@ -5,54 +5,82 @@ document.addEventListener('DOMContentLoaded', () => {
   const viewfinder = document.getElementById('photoViewfinder');
   const applyFilterBtn = document.getElementById('applyFilterBtn');
 
-  // THEME ENGINE: Apply custom theme tokens from URL or default
-  async function initTheme() {
+  let selectedFilterFile = "";
+  let currentLandingId = "default";
+
+  // LANDING & THEME ENGINE
+  async function initApp() {
     try {
       const urlParams = new URLSearchParams(window.location.search);
-      const themeName = urlParams.get('theme') || 'current_theme';
-      console.log(`🎨 Loading theme: ${themeName}`);
-      
-      const res = await fetch(`/themes/${themeName}.json`);
-      if (!res.ok) throw new Error("Theme not found");
-      
-      const theme = await res.json();
-      const root = document.documentElement;
-      Object.entries(theme).forEach(([key, value]) => {
-        if (key !== 'filters') {
-          root.style.setProperty(`--${key}`, value);
-        }
-      });
+      const landingName = urlParams.get('landing');
+      let config;
 
-      // Render filters dynamically
-      if (theme.filters && theme.filters.length > 0) {
-        const container = document.getElementById('filterOptionsContainer');
-        container.innerHTML = '';
-        theme.filters.forEach((file, index) => {
-          const name = file.replace('.md', '').replace('-', ' ');
-          const card = document.createElement('div');
-          card.className = `filter-card \${index === 0 ? 'active' : ''}`;
-          card.dataset.filterFile = file;
-          card.innerHTML = `
-            <div class="filter-preview" style="background: var(--accent); opacity: \${1 - index * 0.2}"></div>
-            <span style="text-transform: capitalize;">\${name}</span>
-          `;
-          card.addEventListener('click', () => {
-            document.querySelectorAll('.filter-card').forEach(c => c.classList.remove('active'));
-            card.classList.add('active');
-            selectedFilterFile = file;
-          });
-          container.appendChild(card);
-          if (index === 0) selectedFilterFile = file;
-        });
+      if (landingName) {
+        console.log(`🚀 Loading Landing: ${landingName}`);
+        const res = await fetch(`/landings/${landingName}/config.json`);
+        config = await res.json();
+        currentLandingId = config.landingId;
+      } else {
+        const themeName = urlParams.get('theme') || 'current_theme';
+        const res = await fetch(`/themes/${themeName}.json`);
+        config = await res.json();
       }
 
-      console.log("🎨 Theme applied successfully");
+      applyConfig(config);
     } catch (e) {
-      console.warn("Theme not found or error loading. Using default CSS theme.");
+      console.warn("Error loading config, using defaults:", e);
+    }
+  }
+
+  function applyConfig(config) {
+    const root = document.documentElement;
+    
+    // Apply CSS Variables (Theme)
+    // If config has a 'theme' property, we might need to fetch that theme first, 
+    // but for simplicity, we'll assume themes are standalone or included.
+    // Let's make it fetch the theme if specified:
+    if (config.theme) {
+      fetch(`/themes/${config.theme}.json`)
+        .then(res => res.json())
+        .then(theme => {
+          Object.entries(theme).forEach(([key, value]) => {
+            if (key !== 'filters') root.style.setProperty(`--${key}`, value);
+          });
+        });
+    } else {
+      Object.entries(config).forEach(([key, value]) => {
+        if (key !== 'filters') root.style.setProperty(`--${key}`, value);
+      });
+    }
+
+    // Render filters dynamically
+    const filterList = config.filters || ["party.md"];
+    const container = document.getElementById('filterOptionsContainer');
+    container.innerHTML = '';
+    filterList.forEach((file, index) => {
+      const name = file.replace('.md', '').replace('-', ' ');
+      const card = document.createElement('div');
+      card.className = `filter-card ${index === 0 ? 'active' : ''}`;
+      card.dataset.filterFile = file;
+      card.innerHTML = `
+        <div class="filter-preview" style="background: var(--accent); opacity: ${1 - index * 0.2}"></div>
+        <span style="text-transform: capitalize;">${name}</span>
+      `;
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.filter-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        selectedFilterFile = file;
+      });
+      container.appendChild(card);
+      if (index === 0) selectedFilterFile = file;
+    });
+
+    if (config.landingName) {
+      document.title = config.landingName;
     }
   }
   
-  initTheme();
+  initApp();
   const shareGalleryBtn = document.getElementById('shareGalleryBtn');
   const galleryGrid = document.getElementById('galleryGrid');
   const processingState = document.getElementById('processingState');
@@ -180,7 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           image: currentPhotoBase64,
-          filterFile: selectedFilterFile 
+          filterFile: selectedFilterFile,
+          landingId: currentLandingId
         })
       });
 
@@ -232,7 +261,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await fetch('/api/gallery', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageUrl: transformedPhotoUrl })
+        body: JSON.stringify({ 
+          imageUrl: transformedPhotoUrl,
+          landingId: currentLandingId
+        })
       });
 
       if (response.ok) {
@@ -254,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadGallery() {
     try {
-      const response = await fetch('/api/gallery');
+      const response = await fetch(`/api/gallery?landingId=${currentLandingId}`);
       const data = await response.json();
 
       galleryGrid.innerHTML = '';

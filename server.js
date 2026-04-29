@@ -154,14 +154,15 @@ app.post('/api/generate', async (req, res) => {
 
 app.post('/api/gallery', async (req, res) => {
     try {
-        const { imageUrl } = req.body;
+        const { imageUrl, landingId } = req.body;
         if (!imageUrl) return res.status(400).json({ error: 'No image URL' });
+        const currentLanding = landingId || 'default';
 
         if (supabase) {
-            console.log("--- Saving to Supabase ---");
+            console.log(`--- Saving to Supabase for landing: ${currentLanding} ---`);
             let publicUrl = imageUrl;
 
-            // ALWAYS upload to Supabase Storage to ensure persistence
+            // ALWAYS upload to Supabase Storage
             try {
                 let buffer;
                 let contentType = 'image/png';
@@ -170,9 +171,7 @@ app.post('/api/gallery', async (req, res) => {
                     const base64Data = imageUrl.replace(/^data:image\/\w+;base64,/, "");
                     buffer = Buffer.from(base64Data, 'base64');
                 } else if (imageUrl.startsWith('http')) {
-                    console.log("Downloading external image for Supabase Storage...");
                     const imgRes = await fetch(imageUrl);
-                    if (!imgRes.ok) throw new Error(`Failed to fetch image: ${imgRes.statusText}`);
                     buffer = Buffer.from(await imgRes.arrayBuffer());
                     contentType = imgRes.headers.get('content-type') || 'image/png';
                 } else {
@@ -180,8 +179,9 @@ app.post('/api/gallery', async (req, res) => {
                     buffer = await fs.readFile(sourcePath);
                 }
 
-                const fileName = `dragon_${Date.now()}.png`;
-                console.log(`Uploading ${fileName} to 'gallery' bucket...`);
+                // ORGANIZAR POR CARPETA DE LANDING
+                const fileName = `${currentLanding}/dragon_${Date.now()}.png`;
+                console.log(`Uploading to path: gallery/${fileName}`);
 
                 const { data: uploadData, error: uploadError } = await supabase.storage
                     .from('gallery')
@@ -208,7 +208,7 @@ app.post('/api/gallery', async (req, res) => {
             console.log("Inserting record into 'gallery' table...");
             const { data, error } = await supabase
                 .from('gallery')
-                .insert([{ url: publicUrl }])
+                .insert([{ url: publicUrl, landing_id: currentLanding }])
                 .select();
 
             if (error) {
@@ -260,10 +260,14 @@ app.post('/api/gallery', async (req, res) => {
 
 app.get('/api/gallery', async (req, res) => {
     try {
+        const { landingId } = req.query;
+        const currentLanding = landingId || 'default';
+
         if (supabase) {
             const { data, error } = await supabase
                 .from('gallery')
                 .select('*')
+                .eq('landing_id', currentLanding)
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
