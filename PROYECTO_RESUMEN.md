@@ -30,7 +30,7 @@ Spruce Spirit Photobooth es una aplicación web interactiva que utiliza Intelige
    - Hosting automatizado con soporte para variables de entorno y despliegue continuo desde GitHub.
 
 ## ✨ Características Principales
-- **Dragon Transformation**: Procesamiento de IA con cuenta regresiva interactiva.
+- **Dragon Transformation**: Procesamiento de IA con filtros aleatorios (Fiesta, Bosque, Templo) y cuenta regresiva interactiva.
 - **Galería Inteligente**: Cuadrícula de 4 columnas optimizada con persistencia en la nube.
 - **Social & Tools**: Botones integrados de "Like" (interacción visual) y "Descarga" (gestión de archivos blobs).
 - **Admin Secret Mode**: Sistema de moderación oculto activado por parámetros de URL (`?admin=spruce`) para el borrado seguro de contenido.
