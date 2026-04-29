@@ -114,7 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentPhotoBase64 = null;
   let transformedPhotoUrl = null;
   let previewImage = null;
-  let selectedFilterFile = "";
 
   // INITIAL LOAD
   const urlParams = new URLSearchParams(window.location.search);
