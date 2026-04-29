@@ -7,9 +7,9 @@ Todos los colores están centralizados en `:root` dentro de `style.css`. Cambian
 
 | Variable | Valor Actual | Uso |
 | :--- | :--- | :--- |
-| `--navy` | `#1835AB` | Color principal (Hero, botones primarios) |
-| `--gold` | `#FFB800` | Color de acento (Botón Upload, Highlight) |
-| `--blue-gradient` | `linear-gradient(...)` | Fondo dinámico del Hero |
+| `--primary` | `#1835AB` | Color principal (Hero, botones primarios) |
+| `--accent` | `#FFB800` | Color de acento (Botón Upload, Highlight) |
+| `--hero-gradient` | `linear-gradient(...)` | Fondo dinámico del Hero |
 | `--white` | `#FFFFFF` | Fondos de secciones y tarjetas |
 | `--gray-light` | `#F8FAFC` | Fondos secundarios y estados hover |
 
@@ -36,8 +36,8 @@ Todos los colores están centralizados en `:root` dentro de `style.css`. Cambian
 Si quieres usar esta plantilla para un nuevo proyecto (ej. "Space Photobooth"):
 
 1. **Visuales (CSS):**
-   - Cambia `--navy` por un color oscuro espacial.
-   - Cambia el gradiente del Hero en `.hero`.
+   - Cambia `--primary` por el nuevo color principal.
+   - Cambia el gradiente del Hero en `--hero-gradient`.
    - Reemplaza `dragon_mascot.png` y `school_shield.png` en la carpeta `/public`.
 
 2. **IA (Prompts):**
