@@ -20,6 +20,7 @@ const supabaseKey = process.env.SUPABASE_ANON_KEY;
 const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
 
 const app = express();
+app.set('trust proxy', true); // Vital para detectar el hostname correcto en Render/Proxies
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
@@ -28,29 +29,43 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 const publicPath = path.join(__dirname, 'public');
 const distPath = path.join(__dirname, 'dist');
 
-app.use(express.static(distPath));
-app.use(express.static(publicPath));
-
 console.log(`Serving static files from: ${distPath} and ${publicPath}`);
 
-// Manejar la página de ventas en el dominio principal
+// 1. PRIMERO LAS RUTAS CRÍTICAS (Para que no las pise el static middleware)
 app.get('/', (req, res) => {
     const hostname = req.hostname;
-    // Si es el dominio principal, mostrar la página de ventas
-    if (hostname === 'sharephoto.fun' || hostname === 'www.sharephoto.fun') {
+    console.log("--- Request at / ---");
+    console.log("Hostname detected:", hostname);
+    
+    const isMainDomain = 
+        hostname === 'sharephoto.fun' || 
+        hostname === 'www.sharephoto.fun' || 
+        hostname === 'localhost' || 
+        hostname === '127.0.0.1' ||
+        hostname.includes('onrender.com');
+
+    if (isMainDomain) {
+        console.log("Serving SALES page");
         res.sendFile(path.join(publicPath, 'sales.html'));
     } else {
-        // Para subdominios, mostrar la app principal
+        console.log("Serving APP page (Subdomain mode)");
         res.sendFile(path.join(distPath, 'index.html'), (err) => {
-            if (err) res.sendFile(path.join(publicPath, 'index.html'));
+            if (err) res.sendFile(path.join(__dirname, 'index.html'));
         });
     }
 });
 
+// 2. LUEGO LOS ARCHIVOS ESTÁTICOS
+app.use(express.static(distPath));
+app.use(express.static(publicPath));
+
 // Manejar rutas de landings (/l/nombre-landing)
 app.get('/l/:landingId', (req, res) => {
     res.sendFile(path.join(distPath, 'index.html'), (err) => {
-        if (err) res.sendFile(path.join(publicPath, 'index.html'));
+        if (err) {
+            // Fallback para desarrollo local
+            res.sendFile(path.join(__dirname, 'index.html'));
+        }
     });
 });
 
